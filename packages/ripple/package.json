@@ -1,0 +1,15 @@
+{
+  "name": "ripple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@relaxed/tsconfig": "workspace:*"
+  },
+  "author": "",
+  "license": "ISC"
+}
