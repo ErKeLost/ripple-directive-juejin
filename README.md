@@ -1,6 +1,4 @@
----
-theme: devui-blue
----
+
 >本文源于 [Vue DevUI](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FDevCloudFE%2Fvue-devui "https://github.com/DevCloudFE/vue-devui") 开源组件库实践。
 # 1. DevUI Ripple介绍
 
