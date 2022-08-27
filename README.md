@@ -1,3 +1,6 @@
+---
+theme: devui-blue
+---
 >本文源于 [Vue DevUI](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FDevCloudFE%2Fvue-devui "https://github.com/DevCloudFE/vue-devui") 开源组件库实践。
 # 1. DevUI Ripple介绍
 
@@ -11,7 +14,7 @@ Ripple水波纹作为比较受欢迎的交互效果，用于对用户的行为�
 
 ![ripple.gif](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ff828195a59648788cefa2a4ca2813c3~tplv-k3u1fbpfcp-watermark.image?)
 
-本文做为代码逻辑拆解，具体实现以及效果可以进入DevUI官网查看
+> 本文做为代码逻辑拆解，具体实现以及效果可以进入DevUI官网查看
 
 [官网传送门](https://vue-devui.github.io/)
 
@@ -25,11 +28,17 @@ Ripple水波纹作为比较受欢迎的交互效果，用于对用户的行为�
 水波纹指令需要作用在一个块级元素，元素要有宽度和高度，每当用户点击，获取用户点击坐标到块级元素的四个直角顶点的距离其中距离最远的顶点作为`ripple`半径画圆
 
 #### 图解
-![image.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/395c0571c2e64cc68324c0332dbc1c8c~tplv-k3u1fbpfcp-watermark.image?)
 
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e587cab65ca946159bae72e6bf9df83f~tplv-k3u1fbpfcp-watermark.image?)
 ## 2.2 交互事件
 
-交互事件对于ripple的展示与移除，我们带大家体验h5的`pointEvent`指针事件
+交互事件对于ripple的生成与移除，我们使用`pointEvent`指针事件
+
+指针事件 - Pointer events 是一类可以为定点设备所触发的DOM事件。它们被用来创建一个可以有效掌握各类输入设备（鼠标、触控笔和单点或多点的手指触摸）的统一的DOM事件模型。
+
+所谓[指针](https://developer.mozilla.org/zh-CN/docs/Web/API/Pointer_events#term_pointer) 是指一个可以明确指向屏幕上某一组坐标的硬件设备。建立这样一个单独的事件模型可以有效的简化Web站点与应用所需的工作，同时也便于提供更加一致与良好的用户体验，无需关心不同用户和场景在输入硬件上的差异。而且，对于某些特定设备才可处理的交互情景，指针事件也定义了一个 [`pointerType`](https://developer.mozilla.org/zh-CN/docs/Web/API/PointerEvent/pointerType) 属性以使开发者可以知晓该事件的触发设备，以有针对性的加以处理。
+
+也就是说本来web端我们会使用*mousedown、mouseover、mouseup*等来[监听](https://so.csdn.net/so/search?q=%E7%9B%91%E5%90%AC&spm=1001.2101.3001.7020)鼠标时间、移动端我们会用*touchstart*、*touchmove*、touchend监听触摸时间，但是使用了指针事件Pointer events 就不用这样区分了，它会自动兼容web端还是移动端的事件，也会返回p`ointerType`属性表明触发设备。
 
 ## 2.3 Ripple元素生成问题
 
@@ -42,7 +51,7 @@ Ripple水波纹作为比较受欢迎的交互效果，用于对用户的行为�
 
 ## 2.4 如何兼容Vue2 和 Vue3
 
-Vue2和Vue3在指令方面最大的区别就是生命周期的不同，这样我们可以根据当前Vue版本来选择Map不同的生命周期进行兼容Vue2跟Vue3
+Vue2和Vue3在指令方面最大的区别就是生命周期的不同，这样我们可以根据当前Vue版本来选择Map不同的生命周期进行兼容Vue2跟Vue3，代码实现方面会带大家实现
 
 
 # 3. 代码实现
@@ -52,7 +61,7 @@ Vue2和Vue3在指令方面最大的区别就是生命周期的不同，这样我
 - 获取鼠标点击指令元素的`DomRect`对象,获取我们当前距离视口和距离el的各个位置
 
 ```js
-  // el 代表点击元素 
+  // el 代表点击元素 是指令传递过来的元素`el`
   const rect = el.getBoundingClientRect();
   // 获取点击位置距离el的垂直和水平距离 event 代表鼠标事件 directive 指令会传递event参数
   const x = event.clientX - rect.left
@@ -109,7 +118,7 @@ rippleContainer.style.pointerEvents = 'none';
   const rippleElement = document.createElement('div');
   rippleElement.style.position = 'absolute';
   rippleElement.style.width = `${radius * 2}px`;
-  // rippleElement.style.height = `${radius * 2}px`;
+  rippleElement.style.height = `${radius * 2}px`;
   rippleElement.style.top = `${y}px`;
   rippleElement.style.left =`${x}px`;
 
@@ -175,8 +184,44 @@ document.addEventListener('pointerup', releaseRipple);
 
 > 这时候 最简单的ripple效果就出来啦 
 
+![1.gif](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/58181943c7444ef7b7cf38055a2508ef~tplv-k3u1fbpfcp-watermark.image?)
 
-## 3.4 兼容Vue2 & Vue3
+> 然后我们给第一层的父元素`rippleContainer`添加`overflow：hidden`完整效果就出来了
+
+![2.gif](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2f650525e34d44339bd41bd4f93fc179~tplv-k3u1fbpfcp-watermark.image?)
+
+## 3.5 优化交互效果
+
+我们在点击Ripple元素的时候因为ripple是通过transition从0 scale到 1的一个过程, 这样会有一个问题，如果我们点击速度过快就会导致中间一直都会有一个小圆点，影响交互效果，那么我们如何优化呢，我们这里可以使用`cubic-bezier`贝塞尔曲线
+
+我们可以在animation 和 transition 中使用`cubic-bezier` 贝塞尔曲线就是控制过渡变化的速度曲线
+
+> 推荐一个可以在线预览进行交互的[贝塞尔曲线网站](https://cubic-bezier.com/#.51,1.26,.55,.72)
+> 
+![image.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9aa3286b63c4a80ae9e73939a119bc8~tplv-k3u1fbpfcp-watermark.image?)
+
+我们只需要保证ripple 过渡的效果是一开始快，然后慢，我们就可以让整个ripple效果看起来好很多
+
+
+```js
+  // old
+  rippleElement.style.transition = `transform ${options.duration / 1000}s   
+  ease-in-out
+  , opacity ${options.duration / 1000}s
+  ease-in-out
+  
+  // new 
+  rippleElement.style.transition = `transform ${options.duration / 1000}s   
+  cubic-bezier(0, 0.5, 0.25, 1)
+  , opacity ${options.duration / 1000}s
+  cubic-bezier(0.0, 0, 0.2, 1)
+```
+
+![3.gif](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4dca7ce8bc734ce9930e62b7feb6208b~tplv-k3u1fbpfcp-watermark.image?)
+
+> 实际效果 比 Gif 图要好
+## 3.4 兼容Vue2 & Vue3 | app.config.globalProperties
+
 
 `app.config.globalProperties` 这是一个在Vue3中访问全局属性的对象，我们只需要判断当前Vue实例中是否有`globalProperties`这个对象，然后赋值不同的生命周期
 
@@ -242,9 +287,7 @@ import Vue from 'vue'
 Vue.use(VRipple)
 ```
 
-
-> [完整代码传送门](https://github.com/ErKeLost/ripple-directive)
-# 4. 打包与发布
+# 4. 打包
 
 我们使用`tsup`进行打包
 > 新建 src/index.ts 文件
@@ -279,6 +322,28 @@ export default defineConfig({
 })
 
 ```
-> 然后就可以发布npm包啦
 
-# 5. 总结
+> 这只是一个最简单的ripple指令的编码与打包，[完整代码传送门](https://github.com/ErKeLost/ripple-directive)
+
+# 加入DevUI
+添加DevUI小助手微信：`devui-official`，拉你到我们的官方交流群。
+## 加入DevUI开源生态建设你将收获什么
+
+直接的价值：
+
+1.  通过打造一个实际的vue3组件库项目，学习最新的`Vite`+`Vue3`+`TypeScript`+`JSX`技术
+1.  学习从0到1搭建一个自己的组件库的整套流程和方法论，包括组件库工程化、组件的设计和开发等
+1.  为自己的简历和职业生涯添彩，参与过优秀的开源项目，这本身就是受面试官青睐的亮点
+1.  结识一群优秀的、热爱学习、热爱开源的小伙伴，大家一起打造一个伟大的产品
+
+长远的价值：
+
+1.  打造个人品牌，提升个人影响力
+1.  培养良好的编码习惯
+1.  获得华为云DevUI团队的荣誉&认可和定制小礼物
+1.  成为PMC&Committer之后还能参与DevUI整个开源生态的决策和长远规划，培养自己的管理和规划能力
+1.  未来有更多机会和可能
+
+DevUI开源，未来可期！
+
+
