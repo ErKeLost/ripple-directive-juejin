@@ -1,11 +1,11 @@
 import type { App } from 'vue'
-import RippleDirective from './src/ripple-directive'
+import { rippleDirective } from './src/ripple-directive'
 
-export { RippleDirective }
+export { rippleDirective }
 
 export default {
   title: 'Ripple 水波纹',
   install(app: App): void {
-    app.directive('Ripple', RippleDirective)
+    rippleDirective(app)
   }
 }

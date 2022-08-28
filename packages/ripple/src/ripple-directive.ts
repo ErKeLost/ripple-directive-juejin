@@ -3,28 +3,39 @@ import {
   DEFAULT_PLUGIN_OPTIONS,
   IRippleDirectiveOptions,
   IRippleDirectiveOptionWithBinding
-} from './options';
-import { ripple } from './v-ripple';
-const optionMap = new WeakMap<HTMLElement, Partial<IRippleDirectiveOptions> | false>();
-const globalOptions = { ...DEFAULT_PLUGIN_OPTIONS };
-export default {
-  mounted(el: HTMLElement, binding: IRippleDirectiveOptionWithBinding): void {
-    optionMap.set(el, binding.value ?? {});
+} from './options'
+import { App } from 'vue'
+import { ripple } from './v-ripple'
+import { getHooks } from './utils/hooks'
+const optionMap = new WeakMap<
+HTMLElement,
+Partial<IRippleDirectiveOptions> | false
+>()
+const globalOptions = { ...DEFAULT_PLUGIN_OPTIONS }
+export const rippleDirective = (app: App) => {
+  const hooks = getHooks(app)
+  app.directive('ripple', {
+    [hooks.mounted](
+      el: HTMLElement,
+      binding: IRippleDirectiveOptionWithBinding
+    ) {
+      optionMap.set(el, binding.value ?? {})
 
-    el.addEventListener('pointerdown', (event) => {
-      const options = optionMap.get(el);
-      // You must make sure that the disabled attribute exists or the instruction terminates with an error
-      if (binding.value && binding.value.disabled) {return;}
-
-      if (options === false) {return;}
-
-      ripple(event, el, {
-        ...globalOptions,
-        ...options
-      });
-    });
-  },
-  updated(el: HTMLElement, binding: IRippleDirectiveOptionWithBinding): void {
-    optionMap.set(el, binding.value ?? {});
-  }
-};
+      el.addEventListener('pointerdown', (event) => {
+        const options = optionMap.get(el)
+        if (binding.value?.disabled) return
+        if (options === false) return
+        ripple(event, el, {
+          ...globalOptions,
+          ...options
+        })
+      })
+    },
+    [hooks.updated](
+      el: HTMLElement,
+      binding: IRippleDirectiveOptionWithBinding
+    ) {
+      optionMap.set(el, binding.value ?? {})
+    }
+  })
+}
