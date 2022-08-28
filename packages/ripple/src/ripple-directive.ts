@@ -8,8 +8,8 @@ import { App } from 'vue'
 import { ripple } from './v-ripple'
 import { getHooks } from './utils/hooks'
 const optionMap = new WeakMap<
-HTMLElement,
-Partial<IRippleDirectiveOptions> | false
+  HTMLElement,
+  Partial<IRippleDirectiveOptions> | false
 >()
 const globalOptions = { ...DEFAULT_PLUGIN_OPTIONS }
 export const rippleDirective = (app: App) => {
